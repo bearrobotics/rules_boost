@@ -2554,5 +2554,5 @@ boost_library(
         ":utility",
         "@python37_include//:include",
     ],
-    linkopts = ["-lpython3.9"],
+    linkopts = ["-lpython3.7"],
 )
