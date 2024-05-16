@@ -2552,7 +2552,7 @@ boost_library(
         ":tuple",
         ":type",
         ":utility",
-        "@python37_include//:include",
+        "@python310_include//:include",
     ],
 
 )
