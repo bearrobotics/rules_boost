@@ -2,6 +2,7 @@ load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_library", "boost_so_library", "hdr_list")
+load("@controller_deps//:requirements.bzl", "requirement")
 
 _w_no_deprecated = selects.with_or({
     ("@platforms//os:linux", "@platforms//os:osx", "@platforms//os:ios", "@platforms//os:watchos", "@platforms//os:tvos"): [
@@ -2516,6 +2517,51 @@ boost_library(
         ":variant2",
     ],
 )
+cc_library(
+    name = "python310_lib",
+    srcs = ["@python310_x86_64-unknown-linux-gnu//:lib/libpython3.so"],
+    hdrs = ["@python310_x86_64-unknown-linux-gnu//:includes"],
+    includes = [
+        "external/python310_x86_64-unknown-linux-gnu/include/python3.10/",
+    ],
+    visibility = ["//visibility:public"]
+)
+
+cc_library(
+    name = "numpy_headers",
+    hdrs = [
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/__multiarray_api.h",                                                                                                                                                                                
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/__ufunc_api.h",                                                                                                                                                                
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/_neighborhood_iterator_imp.h",                                                                                                                                                                  
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/_numpyconfig.h",                                                                                                                                                                                
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/arrayobject.h",                                                                                                                                                                                 
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/arrayscalars.h",                                                                                                                                                                                
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/experimental_dtype_api.h",                                                                                                                                                                      
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/halffloat.h",                                                                                                                                                                                   
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/libdivide/libdivide.h",                                                                                                                                                                         
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/multiarray_api.txt",                                                                                                                                                                            
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/ndarrayobject.h",                                                                                                                                                                               
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/ndarraytypes.h",                                                                                                                                                                                
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/noprefix.h",                                                                                                                                                                                    
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_1_7_deprecated_api.h",                                                                                                                                                                      
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_3kcompat.h",                                                                                                                                                                                
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_common.h",                                                                                                                                                                                  
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_cpu.h",                                                                                                                                                                                     
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_endian.h",                                                                                                                                                                                  
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_interrupt.h",                                                                                                                                                                               
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_math.h",                                                                                                                                                                                    
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_no_deprecated_api.h",                                                                                                                                                                       
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/npy_os.h",                                                                                                                                                                                      
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/numpyconfig.h",                                                                                                                                                                                 
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/old_defines.h",                                                                                                                                                                                 
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/oldnumeric.h",                                                                                                                                                                                  
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/random/bitgen.h",                                                                                                                                                                               
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/random/distributions.h",                                                                                                                                                                        
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/ufunc_api.txt",                                                                                                                                                                                 
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/ufuncobject.h",                                                                                                                                                                                 
+        "@controller_deps//pypi__numpy:numpy/core/include/numpy/utils.h",
+    ],
+)
 
 boost_library(
     name = "python",
@@ -2524,8 +2570,13 @@ boost_library(
         "libs/python/src/numpy/*.cpp",
         "libs/python/src/object/*.cpp",
     ]),
+    copts = [
+        "-Iexternal/python310_x86_64-unknown-linux-gnu/include/python3.10/",
+        "-Iexternal/controller_deps/pypi__numpy/numpy/core/include/"
+    ],
     exclude_src = ["libs/python/src/fabscript"],
     deps = [
+        ":numpy_headers",
         ":assert",
         ":bind",
         ":config",
@@ -2552,7 +2603,7 @@ boost_library(
         ":tuple",
         ":type",
         ":utility",
-        "@python310_include//:include",
+        ":python310_lib",
     ],
 
 )
