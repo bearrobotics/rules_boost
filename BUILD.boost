@@ -2517,15 +2517,6 @@ boost_library(
         ":variant2",
     ],
 )
-cc_library(
-    name = "python310_lib",
-    srcs = ["@python310_x86_64-unknown-linux-gnu//:lib/libpython3.so"],
-    hdrs = ["@python310_x86_64-unknown-linux-gnu//:includes"],
-    includes = [
-        "external/python310_x86_64-unknown-linux-gnu/include/python3.10/",
-    ],
-    visibility = ["//visibility:public"]
-)
 
 cc_library(
     name = "numpy_headers",
@@ -2569,13 +2560,11 @@ boost_library(
         "libs/python/src/converter/*.cpp",
         "libs/python/src/numpy/*.cpp",
         "libs/python/src/object/*.cpp",
+        "@python310_x86_64-unknown-linux-gnu//:lib/libpython3.10.so"
     ]),
-    copts = [
-        "-Iexternal/python310_x86_64-unknown-linux-gnu/include/python3.10/",
-        "-Iexternal/controller_deps_numpy/numpy/core/include/"
-    ],
     exclude_src = ["libs/python/src/fabscript"],
     deps = [
+        "@python310_x86_64-unknown-linux-gnu//:python_headers",
         ":numpy_headers",
         ":assert",
         ":bind",
