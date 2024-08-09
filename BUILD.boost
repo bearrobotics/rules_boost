@@ -2552,6 +2552,9 @@ cc_library(
         "@controller_deps_numpy//:numpy/core/include/numpy/ufuncobject.h",                                                                                                                                                                                 
         "@controller_deps_numpy//:numpy/core/include/numpy/utils.h",
     ],
+    includes =[ 
+        "../../external/controller_deps_numpy/numpy/core/include/",
+    ]
 )
 
 boost_library(
@@ -2560,8 +2563,7 @@ boost_library(
         "libs/python/src/converter/*.cpp",
         "libs/python/src/numpy/*.cpp",
         "libs/python/src/object/*.cpp",
-        "@python310_x86_64-unknown-linux-gnu//:lib/libpython3.10.so"
-    ]),
+    ]) + ["@python310_x86_64-unknown-linux-gnu//:lib/libpython3.10.so"],
     exclude_src = ["libs/python/src/fabscript"],
     deps = [
         "@python310_x86_64-unknown-linux-gnu//:python_headers",
@@ -2592,7 +2594,6 @@ boost_library(
         ":tuple",
         ":type",
         ":utility",
-        ":python310_lib",
     ],
 
 )

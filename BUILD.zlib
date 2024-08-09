@@ -55,5 +55,4 @@ cc_library(
 # For OSs that bundle libz
 cc_library( 
     name = "zlib_system",
-    linkopts = ["-lz"],
 )
