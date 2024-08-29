@@ -1,8 +1,8 @@
-load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_library", "boost_so_library", "hdr_list")
-load("@controller_deps//:requirements.bzl", "requirement")
+load("@rules_python//python:pip.bzl", "whl_filegroup")
 
 _w_no_deprecated = selects.with_or({
     ("@platforms//os:linux", "@platforms//os:osx", "@platforms//os:ios", "@platforms//os:watchos", "@platforms//os:tvos"): [
@@ -2518,43 +2518,17 @@ boost_library(
     ],
 )
 
+whl_filegroup(
+    name = "numpy_includes",
+    pattern = "numpy/core/include/numpy",
+    whl = "@rospy_deps//numpy:whl",
+)
+
 cc_library(
     name = "numpy_headers",
-    hdrs = [
-        "@controller_deps_numpy//:numpy/core/include/numpy/__multiarray_api.h",                                                                                                                                                                                
-        "@controller_deps_numpy//:numpy/core/include/numpy/__ufunc_api.h",                                                                                                                                                                
-        "@controller_deps_numpy//:numpy/core/include/numpy/_neighborhood_iterator_imp.h",                                                                                                                                                                  
-        "@controller_deps_numpy//:numpy/core/include/numpy/_numpyconfig.h",                                                                                                                                                                                
-        "@controller_deps_numpy//:numpy/core/include/numpy/arrayobject.h",                                                                                                                                                                                 
-        "@controller_deps_numpy//:numpy/core/include/numpy/arrayscalars.h",                                                                                                                                                                                
-        "@controller_deps_numpy//:numpy/core/include/numpy/experimental_dtype_api.h",                                                                                                                                                                      
-        "@controller_deps_numpy//:numpy/core/include/numpy/halffloat.h",                                                                                                                                                                                   
-        "@controller_deps_numpy//:numpy/core/include/numpy/libdivide/libdivide.h",                                                                                                                                                                         
-        "@controller_deps_numpy//:numpy/core/include/numpy/multiarray_api.txt",                                                                                                                                                                            
-        "@controller_deps_numpy//:numpy/core/include/numpy/ndarrayobject.h",                                                                                                                                                                               
-        "@controller_deps_numpy//:numpy/core/include/numpy/ndarraytypes.h",                                                                                                                                                                                
-        "@controller_deps_numpy//:numpy/core/include/numpy/noprefix.h",                                                                                                                                                                                    
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_1_7_deprecated_api.h",                                                                                                                                                                      
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_3kcompat.h",                                                                                                                                                                                
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_common.h",                                                                                                                                                                                  
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_cpu.h",                                                                                                                                                                                     
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_endian.h",                                                                                                                                                                                  
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_interrupt.h",                                                                                                                                                                               
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_math.h",                                                                                                                                                                                    
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_no_deprecated_api.h",                                                                                                                                                                       
-        "@controller_deps_numpy//:numpy/core/include/numpy/npy_os.h",                                                                                                                                                                                      
-        "@controller_deps_numpy//:numpy/core/include/numpy/numpyconfig.h",                                                                                                                                                                                 
-        "@controller_deps_numpy//:numpy/core/include/numpy/old_defines.h",                                                                                                                                                                                 
-        "@controller_deps_numpy//:numpy/core/include/numpy/oldnumeric.h",                                                                                                                                                                                  
-        "@controller_deps_numpy//:numpy/core/include/numpy/random/bitgen.h",                                                                                                                                                                               
-        "@controller_deps_numpy//:numpy/core/include/numpy/random/distributions.h",                                                                                                                                                                        
-        "@controller_deps_numpy//:numpy/core/include/numpy/ufunc_api.txt",                                                                                                                                                                                 
-        "@controller_deps_numpy//:numpy/core/include/numpy/ufuncobject.h",                                                                                                                                                                                 
-        "@controller_deps_numpy//:numpy/core/include/numpy/utils.h",
-    ],
-    includes =[ 
-        "../../external/controller_deps_numpy/numpy/core/include/",
-    ]
+    hdrs = [":numpy_includes"],
+    includes = ["numpy_includes/numpy/core/include"],
+    deps = ["@rules_python//python/cc:current_py_cc_headers"],
 )
 
 boost_library(
@@ -2563,11 +2537,9 @@ boost_library(
         "libs/python/src/converter/*.cpp",
         "libs/python/src/numpy/*.cpp",
         "libs/python/src/object/*.cpp",
-    ]) + ["@python310_x86_64-unknown-linux-gnu//:lib/libpython3.10.so"],
+    ]) + ["@python310//:files"],
     exclude_src = ["libs/python/src/fabscript"],
     deps = [
-        "@python310_x86_64-unknown-linux-gnu//:python_headers",
-        ":numpy_headers",
         ":assert",
         ":bind",
         ":config",
@@ -2583,6 +2555,7 @@ boost_library(
         ":math",
         ":mpl",
         ":noncopyable",
+        ":numpy_headers",
         ":operators",
         ":preprocessor",
         ":property_map",
@@ -2594,6 +2567,6 @@ boost_library(
         ":tuple",
         ":type",
         ":utility",
+        "@python310//:python_headers",
     ],
-
 )
