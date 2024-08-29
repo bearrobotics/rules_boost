@@ -2528,7 +2528,6 @@ cc_library(
     name = "numpy_headers",
     hdrs = [":numpy_includes"],
     includes = ["numpy_includes/numpy/core/include"],
-    deps = ["@rules_python//python/cc:current_py_cc_headers"],
 )
 
 boost_library(
@@ -2537,7 +2536,7 @@ boost_library(
         "libs/python/src/converter/*.cpp",
         "libs/python/src/numpy/*.cpp",
         "libs/python/src/object/*.cpp",
-    ]) + ["@python310//:files"],
+    ]),
     exclude_src = ["libs/python/src/fabscript"],
     deps = [
         ":assert",
@@ -2567,6 +2566,7 @@ boost_library(
         ":tuple",
         ":type",
         ":utility",
-        "@python310//:python_headers",
+        "@rules_python//python/cc:current_py_cc_headers",
+        "@rules_python//python/cc:current_py_cc_libs",
     ],
 )
