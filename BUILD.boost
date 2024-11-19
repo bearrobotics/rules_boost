@@ -694,10 +694,6 @@ boost_library(
 
 boost_library(
     name = "coroutine2",
-    hdrs = glob([
-        "libs/coroutine2/include/**/*.hpp",
-        "libs/coroutine2/include/**/*.ipp",
-    ]),
     deps = [
         ":assert",
         ":config",
@@ -2108,7 +2104,7 @@ boost_library(
 boost_library(
     name = "unordered",
     srcs = glob([
-        "boost/unordered_map/**/*.hpp",
+        "boost/unordered/**/*.hpp",
     ]),
     hdrs = [
         "boost/unordered_map.hpp",
